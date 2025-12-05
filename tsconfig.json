@@ -8,12 +8,18 @@
         "outDir": "./.tmp/build/",
         "moduleResolution": "node",
         "declaration": true,
+        "jsx": "react",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
         "lib": [
             "es2022",
             "dom"
-        ]
+        ],
+        "types": []
     },
     "files": [
-        "./src/visual.ts"
+        "./src/visual.ts",
+        "./src/RouteVisualization.tsx"
     ]
 }

@@ -192,30 +192,34 @@ export class Visual implements IVisual {
 
         if (!this.startCoord || !this.endCoord) {
             this.reactRoot.render(
-                <div style={{ width: this.width, height: this.height, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <div>Please provide start and end coordinates</div>
-                </div>
+                React.createElement(
+                    "div",
+                    { style: { width: this.width, height: this.height, display: "flex", alignItems: "center", justifyContent: "center" } },
+                    React.createElement("div", null, "Please provide start and end coordinates")
+                )
             );
             return;
         }
 
         if (!this.graphData) {
             this.reactRoot.render(
-                <div style={{ width: this.width, height: this.height, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <div>Loading graph data...</div>
-                </div>
+                React.createElement(
+                    "div",
+                    { style: { width: this.width, height: this.height, display: "flex", alignItems: "center", justifyContent: "center" } },
+                    React.createElement("div", null, "Loading graph data...")
+                )
             );
             return;
         }
 
         this.reactRoot.render(
-            <RouteVisualization
-                startCoord={this.startCoord}
-                endCoord={this.endCoord}
-                graphData={this.graphData}
-                width={this.width}
-                height={this.height}
-            />
+            React.createElement(RouteVisualization, {
+                startCoord: this.startCoord,
+                endCoord: this.endCoord,
+                graphData: this.graphData,
+                width: this.width,
+                height: this.height
+            })
         );
     }
 
