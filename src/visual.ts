@@ -63,8 +63,36 @@ export class Visual implements IVisual {
         // Initialize React root
         this.reactRoot = createRoot(container);
         
+        // Render initial placeholder
+        this.renderInitialPlaceholder();
+        
         // Load OSM graph data
         this.loadGraphData();
+    }
+
+    private renderInitialPlaceholder(): void {
+        if (!this.reactRoot) {
+            return;
+        }
+        this.reactRoot.render(
+            React.createElement(
+                "div",
+                { 
+                    style: { 
+                        width: "100%", 
+                        height: "100%", 
+                        display: "flex", 
+                        alignItems: "center", 
+                        justifyContent: "center",
+                        padding: "20px",
+                        boxSizing: "border-box"
+                    } 
+                },
+                React.createElement("div", { style: { textAlign: "center" } }, 
+                    React.createElement("div", { style: { marginBottom: "10px" } }, "Initializing route visualizer...")
+                )
+            )
+        );
     }
 
     private async loadGraphData(): Promise<void> {
@@ -110,6 +138,7 @@ export class Visual implements IVisual {
         this.formattingSettings = this.formattingSettingsService.populateFormattingSettingsModel(VisualFormattingSettingsModel, options.dataViews?.[0]);
         
         console.log('Visual update', options);
+        console.log('Formatting settings:', this.formattingSettings);
         
         // Get dimensions
         this.width = options.viewport.width;
@@ -118,17 +147,27 @@ export class Visual implements IVisual {
         // Parse coordinates from settings
         this.parseCoordinatesFromSettings();
         
+        // Always render, even if coordinates are missing (to show helpful message)
         this.renderVisual();
     }
 
     private parseCoordinatesFromSettings(): void {
         try {
             if (!this.formattingSettings || !this.formattingSettings.coordinatesCard) {
-                console.warn('Settings not available');
+                console.warn('Settings not available, using defaults');
+                // Use default coordinates if settings not available
+                this.startCoord = { lat: 51.4643, lon: -0.1660 };
+                this.endCoord = { lat: 51.4907, lon: -0.2067 };
                 return;
             }
 
             const coords = this.formattingSettings.coordinatesCard;
+            console.log('Coordinate values from settings:', {
+                startLat: coords.startLatitude.value,
+                startLon: coords.startLongitude.value,
+                endLat: coords.endLatitude.value,
+                endLon: coords.endLongitude.value
+            });
             
             const startLat = this.parseCoordinateValue(coords.startLatitude.value);
             const startLon = this.parseCoordinateValue(coords.startLongitude.value);
@@ -170,12 +209,29 @@ export class Visual implements IVisual {
             return;
         }
 
+        // Ensure we have valid dimensions
+        const width = Math.max(this.width || 200, 200);
+        const height = Math.max(this.height || 200, 200);
+
         if (!this.startCoord || !this.endCoord) {
             this.reactRoot.render(
                 React.createElement(
                     "div",
-                    { style: { width: this.width, height: this.height, display: "flex", alignItems: "center", justifyContent: "center" } },
-                    React.createElement("div", null, "Please provide start and end coordinates")
+                    { 
+                        style: { 
+                            width: width, 
+                            height: height, 
+                            display: "flex", 
+                            alignItems: "center", 
+                            justifyContent: "center",
+                            padding: "20px",
+                            boxSizing: "border-box"
+                        } 
+                    },
+                    React.createElement("div", { style: { textAlign: "center" } }, 
+                        React.createElement("div", { style: { marginBottom: "10px", fontWeight: "bold" } }, "Route Coordinates Required"),
+                        React.createElement("div", null, "Please enter start and end coordinates in the formatting pane.")
+                    )
                 )
             );
             return;
@@ -185,8 +241,21 @@ export class Visual implements IVisual {
             this.reactRoot.render(
                 React.createElement(
                     "div",
-                    { style: { width: this.width, height: this.height, display: "flex", alignItems: "center", justifyContent: "center" } },
-                    React.createElement("div", null, "Loading graph data...")
+                    { 
+                        style: { 
+                            width: width, 
+                            height: height, 
+                            display: "flex", 
+                            alignItems: "center", 
+                            justifyContent: "center",
+                            padding: "20px",
+                            boxSizing: "border-box"
+                        } 
+                    },
+                    React.createElement("div", { style: { textAlign: "center" } }, 
+                        React.createElement("div", { style: { marginBottom: "10px" } }, "Loading graph data..."),
+                        React.createElement("div", { style: { fontSize: "12px", color: "#666" } }, "Please ensure osm_graph.json is in the assets folder")
+                    )
                 )
             );
             return;
@@ -197,8 +266,8 @@ export class Visual implements IVisual {
                 startCoord: this.startCoord,
                 endCoord: this.endCoord,
                 graphData: this.graphData,
-                width: this.width,
-                height: this.height
+                width: width,
+                height: height
             })
         );
     }
