@@ -33,42 +33,36 @@ import FormattingSettingsSlice = formattingSettings.Slice;
 import FormattingSettingsModel = formattingSettings.Model;
 
 /**
- * Data Point Formatting Card
+ * Coordinates Settings Card
  */
-class DataPointCardSettings extends FormattingSettingsCard {
-    defaultColor = new formattingSettings.ColorPicker({
-        name: "defaultColor",
-        displayName: "Default color",
-        value: { value: "" }
+class CoordinatesCardSettings extends FormattingSettingsCard {
+    startLatitude = new formattingSettings.TextInput({
+        name: "startLatitude",
+        displayName: "Start Latitude",
+        value: "51.4643"
     });
 
-    showAllDataPoints = new formattingSettings.ToggleSwitch({
-        name: "showAllDataPoints",
-        displayName: "Show all",
-        value: true
+    startLongitude = new formattingSettings.TextInput({
+        name: "startLongitude",
+        displayName: "Start Longitude",
+        value: "-0.1660"
     });
 
-    fill = new formattingSettings.ColorPicker({
-        name: "fill",
-        displayName: "Fill",
-        value: { value: "" }
+    endLatitude = new formattingSettings.TextInput({
+        name: "endLatitude",
+        displayName: "End Latitude",
+        value: "51.4907"
     });
 
-    fillRule = new formattingSettings.ColorPicker({
-        name: "fillRule",
-        displayName: "Color saturation",
-        value: { value: "" }
+    endLongitude = new formattingSettings.TextInput({
+        name: "endLongitude",
+        displayName: "End Longitude",
+        value: "-0.2067"
     });
 
-    fontSize = new formattingSettings.NumUpDown({
-        name: "fontSize",
-        displayName: "Text Size",
-        value: 12
-    });
-
-    name: string = "dataPoint";
-    displayName: string = "Data colors";
-    slices: Array<FormattingSettingsSlice> = [this.defaultColor, this.showAllDataPoints, this.fill, this.fillRule, this.fontSize];
+    name: string = "coordinates";
+    displayName: string = "Route Coordinates";
+    slices: Array<FormattingSettingsSlice> = [this.startLatitude, this.startLongitude, this.endLatitude, this.endLongitude];
 }
 
 /**
@@ -77,7 +71,7 @@ class DataPointCardSettings extends FormattingSettingsCard {
 */
 export class VisualFormattingSettingsModel extends FormattingSettingsModel {
     // Create formatting settings model formatting cards
-    dataPointCard = new DataPointCardSettings();
+    coordinatesCard = new CoordinatesCardSettings();
 
-    cards = [this.dataPointCard];
+    cards = [this.coordinatesCard];
 }

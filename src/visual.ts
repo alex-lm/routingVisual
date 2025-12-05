@@ -37,10 +37,6 @@ import { VisualFormattingSettingsModel } from "./settings";
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 import IVisual = powerbi.extensibility.visual.IVisual;
-import DataView = powerbi.DataView;
-import DataViewTable = powerbi.DataViewTable;
-import DataViewTableRow = powerbi.DataViewTableRow;
-import PrimitiveValue = powerbi.PrimitiveValue;
 
 export class Visual implements IVisual {
     private target: HTMLElement;
@@ -119,64 +115,48 @@ export class Visual implements IVisual {
         this.width = options.viewport.width;
         this.height = options.viewport.height;
         
-        // Parse data
-        if (options.dataViews && options.dataViews.length > 0) {
-            const dataView = options.dataViews[0];
-            this.parseDataView(dataView);
-        }
+        // Parse coordinates from settings
+        this.parseCoordinatesFromSettings();
         
         this.renderVisual();
     }
 
-    private parseDataView(dataView: DataView): void {
+    private parseCoordinatesFromSettings(): void {
         try {
-            if (!dataView.table) {
-                console.warn('No table data in dataView');
+            if (!this.formattingSettings || !this.formattingSettings.coordinatesCard) {
+                console.warn('Settings not available');
                 return;
             }
 
-            const table: DataViewTable = dataView.table;
+            const coords = this.formattingSettings.coordinatesCard;
             
-            if (table.rows.length === 0) {
-                console.warn('No rows in table');
-                return;
-            }
+            const startLat = this.parseCoordinateValue(coords.startLatitude.value);
+            const startLon = this.parseCoordinateValue(coords.startLongitude.value);
+            const endLat = this.parseCoordinateValue(coords.endLatitude.value);
+            const endLon = this.parseCoordinateValue(coords.endLongitude.value);
 
-            // Get the first row (assuming single route)
-            const row: DataViewTableRow = table.rows[0];
-            
-            // Extract coordinates from columns
-            // Expected order: startLat, startLon, endLat, endLon
-            if (row.length >= 4) {
-                const startLat = this.parseValue(row[0]);
-                const startLon = this.parseValue(row[1]);
-                const endLat = this.parseValue(row[2]);
-                const endLon = this.parseValue(row[3]);
-
-                if (this.isValidCoordinate(startLat, startLon) && this.isValidCoordinate(endLat, endLon)) {
-                    this.startCoord = { lat: startLat, lon: startLon };
-                    this.endCoord = { lat: endLat, lon: endLon };
-                    console.log('Parsed coordinates:', { start: this.startCoord, end: this.endCoord });
-                } else {
-                    console.warn('Invalid coordinates:', { startLat, startLon, endLat, endLon });
-                }
+            if (this.isValidCoordinate(startLat, startLon) && this.isValidCoordinate(endLat, endLon)) {
+                this.startCoord = { lat: startLat, lon: startLon };
+                this.endCoord = { lat: endLat, lon: endLon };
+                console.log('Parsed coordinates from settings:', { start: this.startCoord, end: this.endCoord });
             } else {
-                console.warn('Insufficient columns in table. Expected 4, got', row.length);
+                console.warn('Invalid coordinates from settings:', { startLat, startLon, endLat, endLon });
+                this.startCoord = null;
+                this.endCoord = null;
             }
         } catch (error) {
-            console.error('Error parsing dataView:', error);
+            console.error('Error parsing coordinates from settings:', error);
+            this.startCoord = null;
+            this.endCoord = null;
         }
     }
 
-    private parseValue(value: PrimitiveValue): number {
-        if (typeof value === 'number') {
-            return value;
+    private parseCoordinateValue(value: string): number {
+        if (!value || value.trim() === '') {
+            return NaN;
         }
-        if (typeof value === 'string') {
-            const parsed = parseFloat(value);
-            return isNaN(parsed) ? 0 : parsed;
-        }
-        return 0;
+        const parsed = parseFloat(value.trim());
+        return isNaN(parsed) ? NaN : parsed;
     }
 
     private isValidCoordinate(lat: number, lon: number): boolean {

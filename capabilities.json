@@ -1,101 +1,31 @@
 {
-    "dataRoles": [
-        {
-            "displayName": "Start Latitude",
-            "name": "startLat",
-            "kind": "Measure"
-        },
-        {
-            "displayName": "Start Longitude",
-            "name": "startLon",
-            "kind": "Measure"
-        },
-        {
-            "displayName": "End Latitude",
-            "name": "endLat",
-            "kind": "Measure"
-        },
-        {
-            "displayName": "End Longitude",
-            "name": "endLon",
-            "kind": "Measure"
-        }
-    ],
+    "dataRoles": [],
     "objects": {
-        "dataPoint": {
+        "coordinates": {
             "properties": {
-                "defaultColor": {
+                "startLatitude": {
                     "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
+                        "text": true
                     }
                 },
-                "showAllDataPoints": {
+                "startLongitude": {
                     "type": {
-                        "bool": true
+                        "text": true
                     }
                 },
-                "fill": {
+                "endLatitude": {
                     "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
+                        "text": true
                     }
                 },
-                "fillRule": {
+                "endLongitude": {
                     "type": {
-                        "fill": {}
-                    }
-                },
-                 "fontSize": {
-                    "type": {
-                        "formatting": {
-                            "fontSize": true
-                        }
+                        "text": true
                     }
                 }
             }
         }
     },
-    "dataViewMappings": [
-        {
-            "table": {
-                "rows": {
-                    "select": [
-                        {
-                            "bind": {
-                                "to": "startLat"
-                            }
-                        },
-                        {
-                            "bind": {
-                                "to": "startLon"
-                            }
-                        },
-                        {
-                            "bind": {
-                                "to": "endLat"
-                            }
-                        },
-                        {
-                            "bind": {
-                                "to": "endLon"
-                            }
-                        }
-                    ]
-                },
-                "rowCount": {
-                    "preferred": {
-                        "value": 1
-                    }
-                }
-            }
-        }
-    ],
+    "dataViewMappings": [],
     "privileges": []
 }
