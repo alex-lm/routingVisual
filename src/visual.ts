@@ -74,25 +74,8 @@ export class Visual implements IVisual {
         if (!this.reactRoot) {
             return;
         }
-        this.reactRoot.render(
-            React.createElement(
-                "div",
-                { 
-                    style: { 
-                        width: "100%", 
-                        height: "100%", 
-                        display: "flex", 
-                        alignItems: "center", 
-                        justifyContent: "center",
-                        padding: "20px",
-                        boxSizing: "border-box"
-                    } 
-                },
-                React.createElement("div", { style: { textAlign: "center" } }, 
-                    React.createElement("div", { style: { marginBottom: "10px" } }, "Initializing route visualizer...")
-                )
-            )
-        );
+        // Don't render anything initially - let update() handle the first render
+        // This ensures settings are available when we render
     }
 
     private async loadGraphData(): Promise<void> {
@@ -111,10 +94,8 @@ export class Visual implements IVisual {
             this.graphData = data as GraphData;
             console.log('Graph data loaded:', this.graphData.node_count, 'nodes,', this.graphData.edge_count, 'edges');
             
-            // Re-render if we already have coordinates
-            if (this.startCoord && this.endCoord) {
-                this.renderVisual();
-            }
+            // Always re-render after loading graph data
+            this.renderVisual();
         } catch (error) {
             console.error('Error loading graph data:', error);
             // Try alternative path
@@ -124,9 +105,8 @@ export class Visual implements IVisual {
                     const data = await altResponse.json();
                     this.graphData = data as GraphData;
                     console.log('Graph data loaded from alternative path');
-                    if (this.startCoord && this.endCoord) {
-                        this.renderVisual();
-                    }
+                    // Always re-render after loading graph data
+                    this.renderVisual();
                 }
             } catch (altError) {
                 console.error('Failed to load graph from alternative path:', altError);
@@ -135,7 +115,13 @@ export class Visual implements IVisual {
     }
 
     public update(options: VisualUpdateOptions) {
-        this.formattingSettings = this.formattingSettingsService.populateFormattingSettingsModel(VisualFormattingSettingsModel, options.dataViews?.[0]);
+        // Always populate settings, even if dataView is empty
+        try {
+            this.formattingSettings = this.formattingSettingsService.populateFormattingSettingsModel(VisualFormattingSettingsModel, options.dataViews?.[0]);
+        } catch (error) {
+            console.warn('Error populating settings, creating default:', error);
+            this.formattingSettings = new VisualFormattingSettingsModel();
+        }
         
         console.log('Visual update', options);
         console.log('Formatting settings:', this.formattingSettings);
