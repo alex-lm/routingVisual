@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.tmp/
+*.log
+.DS_Store
+*.pbiviz
+webpack.statistics.*.html
+osm_graph.pkl
+osm_graph.json
+__pycache__/
+*.pyc
+venv/
+.env
+
