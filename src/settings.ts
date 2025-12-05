@@ -39,25 +39,29 @@ class CoordinatesCardSettings extends FormattingSettingsCard {
     startLatitude = new formattingSettings.TextInput({
         name: "startLatitude",
         displayName: "Start Latitude",
-        value: "51.4643"
+        value: "51.4643",
+        placeholder: "e.g., 51.4643"
     });
 
     startLongitude = new formattingSettings.TextInput({
         name: "startLongitude",
         displayName: "Start Longitude",
-        value: "-0.1660"
+        value: "-0.1660",
+        placeholder: "e.g., -0.1660"
     });
 
     endLatitude = new formattingSettings.TextInput({
         name: "endLatitude",
         displayName: "End Latitude",
-        value: "51.4907"
+        value: "51.4907",
+        placeholder: "e.g., 51.4907"
     });
 
     endLongitude = new formattingSettings.TextInput({
         name: "endLongitude",
         displayName: "End Longitude",
-        value: "-0.2067"
+        value: "-0.2067",
+        placeholder: "e.g., -0.2067"
     });
 
     name: string = "coordinates";
